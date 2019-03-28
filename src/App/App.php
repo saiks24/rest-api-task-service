@@ -5,24 +5,51 @@ use Saiks24\Http\CommandController;
 
 class App
 {
+    /** @var \Saiks24\App\App */
     private static $instance;
 
-    private function __construct()
+    /** @var array */
+    private $config;
+
+    private function __construct(array $config)
     {
-        $this->bootstrap();
+        $this->config = $config;
     }
 
-    public static function make()
+    /** Make application instance
+     * @param array $pathToConfigFile
+     *
+     * @return \Saiks24\App\App
+     */
+    public static function make(array $pathToConfigFile)
     {
-        if(!empty(static::$instance)) {
-            return static::$instance;
+        try {
+            if(!empty(static::$instance)) {
+                return static::$instance;
+            }
+            $config = [];
+            foreach ($pathToConfigFile as $configPath) {
+                if(!is_file($configPath)) {
+                    throw new \Exception('Path to config file is wrong');
+                }
+                $configContent = include ($configPath);
+                if(!empty($configContent)) {
+                    array_merge($config,$configContent);
+                }
+            }
+            $app = new App($config);
+            self::$instance = $app;
+            return $app;
+        } catch (\Exception $e) {
+            echo 'Bootstrap exception:'. $e->getMessage() . PHP_EOL;
+            exit(-1);
         }
-        $app = new App();
-        self::$instance = $app;
-        return $app;
     }
 
-    private function bootstrap()
+    /**
+     * Run application instance
+     */
+    public function run()
     {
         try {
             $app = new \Slim\App();
@@ -34,5 +61,15 @@ class App
             echo 'Bootstrap exception:'. $e->getMessage() . PHP_EOL;
             exit(-1);
         }
+    }
+
+    /** Get param from config by name
+     * @param string $param
+     *
+     * @return mixed|null
+     */
+    public function configGetValue(\string $param)
+    {
+        return $this->config[$param] ?? null;
     }
 }
