@@ -5,13 +5,15 @@
   },
   "autoload": {
     "psr-4": {
+      "Saiks24\\App\\":"src/App/",
       "Saiks24\\Command\\":"src/Command/",
       "Saiks24\\Queue\\":"src/Queue/",
       "Saiks24\\Exceptions\\":"src/Exceptions/",
       "Saiks24\\Validate\\":"src/Validate/",
       "Saiks24\\Storage\\":"src/Storage/",
       "Saiks24\\Http\\":"src/Http/",
-      "Saiks24\\Middleware\\":"src/Middleware/"
+      "Saiks24\\Middleware\\":"src/Middleware/",
+      "Saiks24\\Worker\\":"src/Worker/"
     }
   },
   "require-dev": {
