@@ -1,0 +1,21 @@
+{
+  "require": {
+    "slim/slim": "^3.0",
+    "monolog/monolog": "^1.17"
+  },
+  "autoload": {
+    "psr-4": {
+      "Saiks24\\Command\\":"src/Command/",
+      "Saiks24\\Queue\\":"src/Queue/",
+      "Saiks24\\Exceptions\\":"src/Exceptions/",
+      "Saiks24\\Validate\\":"src/Validate/",
+      "Saiks24\\Storage\\":"src/Storage/",
+      "Saiks24\\Http\\":"src/Http/",
+      "Saiks24\\Middleware\\":"src/Middleware/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.5",
+    "codeception/codeception": "^2.5"
+  }
+}
