@@ -2,6 +2,7 @@
 namespace Saiks24\App;
 
 use Saiks24\Http\CommandController;
+use Saiks24\Middleware\CheckCredentialMiddleware;
 
 class App
 {
@@ -23,9 +24,16 @@ class App
     {
         try {
             $app = new \Slim\App();
-            $app->post('/api/v1/command/create',CommandController::class.':create');
-            $app->delete('/api/v1/command/delete',CommandController::class.':delete');
-            $app->get('/api/v1/command/info',CommandController::class.':info');
+
+            $app->post('/api/v1/command/create',CommandController::class.':create')
+              ->add(new CheckCredentialMiddleware());
+
+            $app->delete('/api/v1/command/delete',CommandController::class.':delete')
+              ->add(new CheckCredentialMiddleware());
+
+            $app->get('/api/v1/command/info',CommandController::class.':info')
+              ->add(new CheckCredentialMiddleware());
+
             $app->run();
         } catch (\Exception $e) {
             echo 'Bootstrap exception:'. $e->getMessage() . PHP_EOL;

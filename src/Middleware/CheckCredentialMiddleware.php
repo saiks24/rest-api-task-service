@@ -8,14 +8,18 @@ class CheckCredentialMiddleware
 {
     public function __invoke(ServerRequestInterface $request,ResponseInterface $response, $next)
     {
-        $token = $request->getHeader('Auth');
-        if(empty($token)) {
+        $token = $request->getHeaderLine('Authorization');
+        $body = $response->getBody();
+        $body->write($token);
+        $response = $response->withBody($body);
 
-        }
+        /** @var \Psr\Http\Message\ResponseInterface $response */
+        $response = $next($request,$response);
 
+        return $response;
     }
 
-    private function validateToken(\string $token)
+    private function validateToken(string $token)
     {
 
     }
