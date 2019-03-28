@@ -14,9 +14,11 @@ interface StorageInterface
     public function add(CommandInterface $command);
 
     /** Get command from storage
+     * @param string $id
+     *
      * @return \Saiks24\Command\CommandInterface
      */
-    public function get() : CommandInterface;
+    public function get(string $id) : CommandInterface;
 
     /** Delete command from storage
      * @param string $id
