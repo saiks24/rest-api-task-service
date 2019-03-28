@@ -17,33 +17,32 @@ class App
     }
 
     /** Make application instance
-     * @param array $pathToConfigFile
+     * @param string $pathToConfig
      *
      * @return \Saiks24\App\App
      */
-    public static function make(array $pathToConfigFile)
+    public static function make(string $pathToConfig)
     {
         try {
             if(!empty(static::$instance)) {
                 return static::$instance;
             }
-            $config = [];
-            foreach ($pathToConfigFile as $configPath) {
-                if(!is_file($configPath)) {
-                    throw new \Exception('Path to config file is wrong');
-                }
-                $configContent = include ($configPath);
-                if(!empty($configContent)) {
-                    array_merge($config,$configContent);
-                }
+            if(!is_file($pathToConfig)) {
+                throw new \Exception('Wrong config file');
             }
-            $app = new App($config);
+            $configContent = self::getConfigContent($pathToConfig);
+            $app = new App($configContent);
             self::$instance = $app;
             return $app;
         } catch (\Exception $e) {
-            echo 'Bootstrap exception:'. $e->getMessage() . PHP_EOL;
-            exit(-1);
+            echo 'Bootstrap exception: '. $e->getMessage() . PHP_EOL;
         }
+    }
+
+    public static function getConfigContent(string $pathToConfig)
+    {
+        $configContent = include($pathToConfig);
+        return $configContent;
     }
 
     /**
@@ -68,8 +67,16 @@ class App
      *
      * @return mixed|null
      */
-    public function configGetValue(\string $param)
+    public function configGetValue(string $param)
     {
         return $this->config[$param] ?? null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 }

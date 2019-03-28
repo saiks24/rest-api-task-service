@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__.'/vendor/autoload.php';
+use \Saiks24\App\App;
 
-$application = \Saiks24\App\App::make();
+$pathToConfig = __DIR__.'/config/config.php';
+$application = App::make($pathToConfig);
 $application->run();
