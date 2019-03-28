@@ -16,35 +16,6 @@ class App
         $this->config = $config;
     }
 
-    /** Make application instance
-     * @param string $pathToConfig
-     *
-     * @return \Saiks24\App\App
-     */
-    public static function make(string $pathToConfig)
-    {
-        try {
-            if(!empty(static::$instance)) {
-                return static::$instance;
-            }
-            if(!is_file($pathToConfig)) {
-                throw new \Exception('Wrong config file');
-            }
-            $configContent = self::getConfigContent($pathToConfig);
-            $app = new App($configContent);
-            self::$instance = $app;
-            return $app;
-        } catch (\Exception $e) {
-            echo 'Bootstrap exception: '. $e->getMessage() . PHP_EOL;
-        }
-    }
-
-    public static function getConfigContent(string $pathToConfig)
-    {
-        $configContent = include($pathToConfig);
-        return $configContent;
-    }
-
     /**
      * Run application instance
      */
@@ -62,6 +33,40 @@ class App
         }
     }
 
+    /** Make application instance
+     * @param string $pathToConfig
+     *
+     * @return \Saiks24\App\App
+     */
+    public static function make(string $pathToConfig) : self
+    {
+        try {
+            if(!empty(static::$instance)) {
+                return static::$instance;
+            }
+            if(!is_file($pathToConfig)) {
+                throw new \Exception('Wrong config file');
+            }
+            $configContent = self::getConfigContent($pathToConfig);
+            $app = new App($configContent);
+            self::$instance = $app;
+            return $app;
+        } catch (\Exception $e) {
+            echo 'Bootstrap exception: '. $e->getMessage() . PHP_EOL;
+        }
+    }
+
+    /** Return array with all config content
+     * @param string $pathToConfig
+     *
+     * @return mixed
+     */
+    private static function getConfigContent(string $pathToConfig)
+    {
+        $configContent = include($pathToConfig);
+        return $configContent;
+    }
+
     /** Get param from config by name
      * @param string $param
      *
@@ -72,11 +77,4 @@ class App
         return $this->config[$param] ?? null;
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig(): array
-    {
-        return $this->config;
-    }
 }
