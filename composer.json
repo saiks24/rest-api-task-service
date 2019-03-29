@@ -1,6 +1,6 @@
 {
   "name": "Saiks24/rest-api-task-service",
-  "description": "Library to work with RPC-JSON Protocol",
+  "description": "Rest api to work with deferred calculations tasks",
   "homepage": "https://github.com/saiks24/json-rpc-php",
   "authors": [
     {
