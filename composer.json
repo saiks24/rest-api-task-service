@@ -1,4 +1,15 @@
 {
+  "name": "Saiks24/rest-api-task-service",
+  "description": "Library to work with RPC-JSON Protocol",
+  "homepage": "https://github.com/saiks24/json-rpc-php",
+  "authors": [
+    {
+      "name": "Saiks24",
+      "email": "saiks1337@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "license": "Apache-2",
   "require": {
     "slim/slim": "^3.0",
     "monolog/monolog": "^1.17"
