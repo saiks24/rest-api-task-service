@@ -25,14 +25,23 @@ class App
         try {
             $app = new \Slim\App();
 
-            $app->post('/api/v1/command/create',CommandController::class.':create')
-              ->add(new CheckCredentialMiddleware());
+            $app->post(
+              '/api/v1/command/create',CommandController::class.':create'
+            )->add(
+              new CheckCredentialMiddleware()
+            );
 
-            $app->delete('/api/v1/command/delete',CommandController::class.':delete')
-              ->add(new CheckCredentialMiddleware());
+            $app->delete(
+              '/api/v1/command/delete',CommandController::class.':delete'
+            )->add(
+              new CheckCredentialMiddleware()
+            );
 
-            $app->get('/api/v1/command/info',CommandController::class.':info')
-              ->add(new CheckCredentialMiddleware());
+            $app->get(
+              '/api/v1/command/info',CommandController::class.':info'
+            )->add(
+              new CheckCredentialMiddleware())
+            ;
 
             $app->run();
         } catch (\Exception $e) {
