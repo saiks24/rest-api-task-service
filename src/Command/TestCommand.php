@@ -12,11 +12,11 @@ class TestCommand implements CommandInterface
     /**
      * TestCommand constructor.
      *
-     * @param $time
-     * @param $status
-     * @param $id
+     * @param int    $time
+     * @param string $status
+     * @param string $id
      */
-    public function __construct($time, $status, $id)
+    public function __construct(int $time, string $status = 'undefined', string $id)
     {
         $this->time = $time;
         $this->status = $status;
