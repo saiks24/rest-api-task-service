@@ -26,7 +26,11 @@ class TestCommand implements CommandInterface
 
     public function execute()
     {
-
+        $this->status = 'process';
+        echo 'I start sleep on: ' . $this->time . ' seconds'.PHP_EOL;
+        sleep($this->time);
+        echo 'I wake up!' . PHP_EOL;
+        $this->status = 'done';
     }
 
     /**

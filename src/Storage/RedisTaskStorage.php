@@ -4,6 +4,7 @@ namespace Saiks24\Storage;
 
 
 use Saiks24\Command\CommandInterface;
+use Saiks24\Command\TestCommand;
 
 class RedisTaskStorage implements StorageInterface
 {
@@ -31,6 +32,10 @@ class RedisTaskStorage implements StorageInterface
         $command = unserialize(
           $this->redisConnect->hGet('tasks:'.$id,'command')
         );
+        if($command instanceof CommandInterface) {
+            return $command;
+        }
+        $command = new TestCommand(time(),'undefined',$id);
         return $command;
     }
 
