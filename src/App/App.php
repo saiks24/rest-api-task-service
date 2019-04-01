@@ -30,13 +30,13 @@ class App
               '/api/v1/command/create',CommandController::class.':create'
             )->add(
               new CheckCredentialMiddleware()
-            );
+            )->add(new RateLimiter(new \Redis(),10));
 
             $app->delete(
               '/api/v1/command/delete',CommandController::class.':delete'
             )->add(
               new CheckCredentialMiddleware()
-            );
+            )->add(new RateLimiter(new \Redis(),10));
 
             $app->get(
               '/api/v1/command/info',CommandController::class.':info'
