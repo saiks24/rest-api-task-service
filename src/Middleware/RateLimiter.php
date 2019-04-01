@@ -21,7 +21,7 @@ class RateLimiter
     }
 
 
-    /** Check that client don't send requests many than limit
+    /** Check that client don't reach the limit of response per second
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Slim\Http\Response                      $response
      * @param                                          $next
@@ -50,11 +50,11 @@ class RateLimiter
     private function isOverRate(string $responseId) : bool
     {
         $key = 'limiter:'.$responseId;
-        if($this->redis->setnx($responseId,$key)) {
-            $this->redis->expire($responseId,10);
+        if($this->redis->setnx($key,0)) {
+            $this->redis->expire($responseId,1);
         }
         $limit = $this->redis->get($key);
-        return (int)$limit > $this->requestLimit;
+        return (int)($limit) >= $this->requestLimit;
     }
 
     /** Increment count of requests
@@ -74,7 +74,7 @@ class RateLimiter
     private function generateIdByRequest(ServerRequestInterface $request) : string
     {
         $token = $request->getHeaderLine('Authorization');
-        $id = $request->getUri() . '::' . $token . '::' . time();
+        $id = $request->getRequestTarget() . '::' . $token . '::' . time();
         return $id;
     }
 

@@ -3,6 +3,7 @@ namespace Saiks24\App;
 
 use Saiks24\Http\CommandController;
 use Saiks24\Middleware\CheckCredentialMiddleware;
+use Saiks24\Middleware\RateLimiter;
 
 class App
 {
@@ -40,8 +41,8 @@ class App
             $app->get(
               '/api/v1/command/info',CommandController::class.':info'
             )->add(
-              new CheckCredentialMiddleware())
-            ;
+              new CheckCredentialMiddleware()
+            )->add(new RateLimiter(new \Redis(),10));
 
             $app->run();
         } catch (\Exception $e) {
