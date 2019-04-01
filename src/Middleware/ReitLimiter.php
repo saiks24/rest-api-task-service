@@ -42,14 +42,18 @@ class ReitLimiter
         return $response;
     }
 
-    /**
+    /** Check that limit was reached
      * @param string $responseId
      *
      * @return bool
      */
     private function isOverReit(string $responseId) : bool
     {
-        $limit = $this->redis->get('limiter:'.$responseId);
+        $key = 'limiter:'.$responseId;
+        if($this->redis->setnx($responseId,$key)) {
+            $this->redis->expire($responseId,10);
+        }
+        $limit = $this->redis->get($key);
         return (int)$limit > $this->requestLimit;
     }
 
@@ -58,7 +62,8 @@ class ReitLimiter
      */
     private function incrementReitById(string $responseId)
     {
-        $this->redis->incr($responseId);
+        $key = 'limiter:'.$responseId;
+        $this->redis->incr($key);
     }
 
     /** Generate id for request
