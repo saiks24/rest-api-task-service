@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 
-class ReitLimiter
+class RateLimiter
 {
     /** @var \Redis */
     private $redis;
