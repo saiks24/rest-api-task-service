@@ -2,6 +2,7 @@
 
 namespace Saiks24\Middleware;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 
@@ -19,12 +20,9 @@ class ReitLimiter
     {
         $this->redis->connect('0.0.0.0');
         $responseId = $this->generateIdByRequest($request);
+
         if($this->isOverReit($responseId)) {
-            $badRequestResponse = $response->withStatus(400);
-            $body = $badRequestResponse->getBody();
-            $body->write(\json_encode(['status'=>'error','message'=>'too many requests']));
-            $badRequestResponse->withBody($body);
-            return $badRequestResponse;
+            return $this->createBadRequest($response);
         }
 
         $this->incrementReitById($responseId);
@@ -45,5 +43,14 @@ class ReitLimiter
     private function generateIdByRequest(ServerRequestInterface $response) : string
     {
 
+    }
+
+    private function createBadRequest(ResponseInterface $response)
+    {
+        $badRequestResponse = $response->withStatus(400);
+        $body = $badRequestResponse->getBody();
+        $body->write(\json_encode(['status'=>'error','message'=>'too many requests']));
+        $badRequestResponse->withBody($body);
+        return $badRequestResponse;
     }
 }
