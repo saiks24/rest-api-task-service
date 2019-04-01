@@ -33,11 +33,11 @@ class RateLimiter
         $this->redis->connect('0.0.0.0');
         $responseId = $this->generateIdByRequest($request);
 
-        if($this->isOverReit($responseId)) {
+        if($this->isOverRate($responseId)) {
             return $this->createBadRequest($response);
         }
 
-        $this->incrementReitById($responseId);
+        $this->incrementRateById($responseId);
         $response = $next($request,$response);
         return $response;
     }
@@ -47,7 +47,7 @@ class RateLimiter
      *
      * @return bool
      */
-    private function isOverReit(string $responseId) : bool
+    private function isOverRate(string $responseId) : bool
     {
         $key = 'limiter:'.$responseId;
         if($this->redis->setnx($responseId,$key)) {
@@ -60,7 +60,7 @@ class RateLimiter
     /** Increment count of requests
      * @param string $responseId
      */
-    private function incrementReitById(string $responseId)
+    private function incrementRateById(string $responseId)
     {
         $key = 'limiter:'.$responseId;
         $this->redis->incr($key);
