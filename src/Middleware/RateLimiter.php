@@ -4,6 +4,7 @@ namespace Saiks24\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Saiks24\App\App;
 use Slim\Http\Response;
 
 class RateLimiter
@@ -30,11 +31,13 @@ class RateLimiter
      */
     public function __invoke(ServerRequestInterface $request, Response $response,$next)
     {
-        $this->redis->connect('0.0.0.0');
+        $app = App::make();
+        $redisConfig = $app->configGetValue('redis');
+        $this->redis->connect($redisConfig['host']);
         $responseId = $this->generateIdByRequest($request);
 
         if($this->isOverRate($responseId)) {
-            return $this->createBadRequest($response);
+            return $this->createClientErrorResponse($response);
         }
 
         $this->incrementRateById($responseId);
@@ -83,7 +86,7 @@ class RateLimiter
      *
      * @return ResponseInterface
      */
-    private function createBadRequest(ResponseInterface $response) : ResponseInterface
+    private function createClientErrorResponse(ResponseInterface $response) : ResponseInterface
     {
         $badRequestResponse = $response->withStatus(400);
         $body = $badRequestResponse->getBody();

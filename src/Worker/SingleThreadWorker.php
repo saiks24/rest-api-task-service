@@ -8,7 +8,7 @@ use Saiks24\Storage\RedisTaskStorage;
 class SingleThreadWorker implements WorkerInterface
 {
 
-    /**
+    /** Start consumer work
      * @return mixed|void
      * @throws \AMQPChannelException
      * @throws \AMQPConnectionException

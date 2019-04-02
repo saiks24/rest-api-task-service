@@ -56,7 +56,7 @@ class App
      *
      * @return \Saiks24\App\App
      */
-    public static function make(string $pathToConfig) : self
+    public static function make(string $pathToConfig = '') : self
     {
         try {
             if(!empty(static::$instance)) {
