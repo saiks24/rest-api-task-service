@@ -41,25 +41,25 @@ class SingleThreadWorker implements WorkerInterface
         $queue->bind('task_exchange','default.queue');
         $taskStorage = new RedisTaskStorage(new \Redis());
         echo 'Done! Worker waited connections...'.PHP_EOL;
-        $queue->consume(function (\AMQPEnvelope $envelope, \AMQPQueue $queue) use($taskStorage) {
-            try {
-                /** @var \Saiks24\Command\CommandInterface $command */
-                $command = unserialize($envelope->getBody());
-                if(! ($command instanceof CommandInterface)) {
-                    throw new \Exception('Invalid task object');
+        while (true) {
+            $messageFromQueue = $queue->get();
+            if ($messageFromQueue instanceof \AMQPEnvelope) {
+                /** @var CommandInterface $command */
+                $command = unserialize($messageFromQueue->getBody());
+                if ($command instanceof CommandInterface) {
+                    $command->execute();
+                    $queue->ack($messageFromQueue->getDeliveryTag());
+                    $taskStorage->add($command);
+                } else {
+                    $queue->nack($messageFromQueue->getDeliveryTag());
                 }
-                $command->execute();
-                $taskStorage->add($command);
-                $queue->ack($envelope->getDeliveryTag());
-            } catch (\Exception $e) {
-                echo $e->getMessage() . PHP_EOL;
-                $queue->nack($envelope->getDeliveryTag());
             }
-        });
+        }
     }
 
     public function stop()
     {
+        echo 'Interrupt'.PHP_EOL;
         exit();
     }
 
