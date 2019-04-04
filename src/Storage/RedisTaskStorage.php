@@ -4,6 +4,7 @@ namespace Saiks24\Storage;
 
 
 use Saiks24\App\App;
+use Saiks24\App\Config;
 use Saiks24\Command\CommandInterface;
 use Saiks24\Command\TestCommand;
 
@@ -14,8 +15,8 @@ class RedisTaskStorage implements StorageInterface
 
     public function __construct(\Redis $redis)
     {
-        $app = App::make(__DIR__.'/../../config/config.php');
-        $redisConfig = $app->configGetValue('redis');
+        $config = new Config(__DIR__.'/../../config/config.php');
+        $redisConfig = $config->configGetValue('redis');
         $redis->pconnect($redisConfig['host']);
         $this->redisConnect = $redis;
     }

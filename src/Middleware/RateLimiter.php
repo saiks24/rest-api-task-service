@@ -31,8 +31,8 @@ class RateLimiter
      */
     public function __invoke(ServerRequestInterface $request, Response $response,$next)
     {
-        $app = App::make();
-        $redisConfig = $app->configGetValue('redis');
+        $config = App::make()->getConfig();
+        $redisConfig = $config->configGetValue('redis');
         $this->redis->connect($redisConfig['host']);
         $responseId = $this->generateIdByRequest($request);
 

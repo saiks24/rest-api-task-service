@@ -2,6 +2,8 @@
 namespace Saiks24\Worker;
 
 
+use Saiks24\App\App;
+use Saiks24\App\Config;
 use Saiks24\Command\CommandInterface;
 use Saiks24\Storage\RedisTaskStorage;
 
@@ -18,13 +20,8 @@ class SingleThreadWorker implements WorkerInterface
     {
         echo 'Worker Try start on pid: ' . getmypid().PHP_EOL;
         echo 'Init connect to queue service'.PHP_EOL;
-        $connection = new \AMQPConnection([
-          'host' => '0.0.0.0',
-          'port' => 5672,
-          'vhost' => '/',
-          'login' => 'guest',
-          'password' => 'guest'
-        ]);
+        $config = new Config(__DIR__.'/../../config/config.php');
+        $connection = new \AMQPConnection($config->configGetValue('amqp'));
         $connection->pconnect();
         echo 'Init channel and exchange'.PHP_EOL;
         $channel = new \AMQPChannel($connection);

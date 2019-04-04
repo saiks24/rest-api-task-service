@@ -10,10 +10,10 @@ class App
     /** @var \Saiks24\App\App */
     private static $instance;
 
-    /** @var array */
+    /** @var \Saiks24\App\Config */
     private $config;
 
-    private function __construct(array $config)
+    private function __construct(Config $config)
     {
         $this->config = $config;
     }
@@ -65,8 +65,8 @@ class App
             if(!is_file($pathToConfig)) {
                 throw new \Exception('Wrong config file');
             }
-            $configContent = self::getConfigContent($pathToConfig);
-            $app = new App($configContent);
+            $config = new Config($pathToConfig);
+            $app = new App($config);
             self::$instance = $app;
             return $app;
         } catch (\Exception $e) {
@@ -74,25 +74,11 @@ class App
         }
     }
 
-    /** Return array with all config content
-     * @param string $pathToConfig
-     *
-     * @return mixed
+    /**
+     * @return \Saiks24\App\Config
      */
-    private static function getConfigContent(string $pathToConfig)
+    public function getConfig(): Config
     {
-        $configContent = include($pathToConfig);
-        return $configContent;
+        return $this->config;
     }
-
-    /** Get param from config by name
-     * @param string $param
-     *
-     * @return mixed|null
-     */
-    public function configGetValue(string $param)
-    {
-        return $this->config[$param] ?? null;
-    }
-
 }
