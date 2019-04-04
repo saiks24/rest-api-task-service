@@ -1,15 +1,14 @@
 <?php
 namespace Saiks24\Worker;
 
-
-use Saiks24\App\App;
 use Saiks24\App\Config;
 use Saiks24\Command\CommandInterface;
 use Saiks24\Storage\RedisTaskStorage;
 
 class SingleThreadWorker implements WorkerInterface
 {
-
+    /** @var bool */
+    private $isInterupted;
     /** Start consumer work
      * @return mixed|void
      * @throws \AMQPChannelException
@@ -51,13 +50,17 @@ class SingleThreadWorker implements WorkerInterface
                     $queue->nack($messageFromQueue->getDeliveryTag());
                 }
             }
+            if($this->isInterupted) {
+                echo 'Stopped by Interrupt' . PHP_EOL;
+                exit();
+            }
         }
     }
 
     public function stop()
     {
-        echo 'Interrupt'.PHP_EOL;
-        exit();
+        echo 'Worker stopped when finish worked with task...';
+        $this->isInterupted = true;
     }
 
     public function getStatus(): array

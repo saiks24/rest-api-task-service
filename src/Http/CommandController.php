@@ -21,7 +21,7 @@ class CommandController
     {
         $taskId = md5(rand(0,PHP_INT_MAX));
         $queue = new AMQPQueue();
-        $command = new TestCommand(3,'progress',$taskId);
+        $command = new TestCommand(10,'progress',$taskId);
         $queue->addTaskToQueue($command);
         $storage = new RedisTaskStorage(new \Redis());
         $storage->add($command);
