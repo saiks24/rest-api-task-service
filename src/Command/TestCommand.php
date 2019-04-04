@@ -28,7 +28,11 @@ class TestCommand implements CommandInterface
     {
         $this->status = 'process';
         echo 'I start sleep on: ' . $this->time . ' seconds'.PHP_EOL;
-        sleep($this->time);
+        $t = sleep($this->time);
+        // If task will interrupted
+        if(!empty($t)) {
+            sleep($t);
+        }
         echo 'I wake up!' . PHP_EOL;
         $this->status = 'done';
     }
