@@ -8,7 +8,7 @@ use Saiks24\Storage\RedisTaskStorage;
 class SingleThreadWorker implements WorkerInterface
 {
     /** @var bool */
-    private $isInterupted;
+    private $isInterrupted;
     /** Start consumer work
      * @return mixed|void
      * @throws \AMQPChannelException
@@ -50,7 +50,7 @@ class SingleThreadWorker implements WorkerInterface
                     $queue->nack($messageFromQueue->getDeliveryTag());
                 }
             }
-            if($this->isInterupted) {
+            if($this->isInterrupted) {
                 echo 'Stopped by Interrupt' . PHP_EOL;
                 exit();
             }
