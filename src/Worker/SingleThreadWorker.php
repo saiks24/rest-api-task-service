@@ -60,7 +60,7 @@ class SingleThreadWorker implements WorkerInterface
     public function stop()
     {
         echo 'Worker stopped when finish worked with task...';
-        $this->isInterupted = true;
+        $this->isInterrupted = true;
     }
 
     public function getStatus(): array
