@@ -62,8 +62,10 @@ class RateLimiter
 
     /** Increment count of requests
      * @param string $responseId
+     *
+     * @return void
      */
-    private function incrementRateById(string $responseId)
+    private function incrementRateById(string $responseId) : void
     {
         $key = 'limiter:'.$responseId;
         $this->redis->incr($key);

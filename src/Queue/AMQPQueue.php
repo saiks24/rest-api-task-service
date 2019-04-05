@@ -6,7 +6,7 @@ use Saiks24\Command\CommandInterface;
 class AMQPQueue
 {
 
-    public function addTaskToQueue(CommandInterface $command)
+    public function addTaskToQueue(CommandInterface $command) : void
     {
         $connection = $this->connect();
         $channel = new \AMQPChannel($connection);
@@ -22,7 +22,7 @@ class AMQPQueue
         );
     }
 
-    private function instanceQueue(\AMQPChannel $channel)
+    private function instanceQueue(\AMQPChannel $channel) : \AMQPQueue
     {
         $queue = new \AMQPQueue($channel);
         $queue->setFlags(AMQP_DURABLE);
@@ -32,7 +32,7 @@ class AMQPQueue
         return $queue;
     }
 
-    private function instanceExchange(\AMQPChannel $channel)
+    private function instanceExchange(\AMQPChannel $channel) : \AMQPExchange
     {
         $exchange = new \AMQPExchange($channel);
         $exchange->setType(AMQP_EX_TYPE_DIRECT);

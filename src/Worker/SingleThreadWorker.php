@@ -76,7 +76,7 @@ class SingleThreadWorker implements WorkerInterface
      * @throws \AMQPConnectionException
      * @throws \AMQPExchangeException
      */
-    private function initExchange(\AMQPChannel $channel)
+    private function initExchange(\AMQPChannel $channel) : void
     {
         $exchange = new \AMQPExchange($channel);
         $exchange->setType(AMQP_EX_TYPE_DIRECT);
@@ -92,7 +92,7 @@ class SingleThreadWorker implements WorkerInterface
      * @throws \AMQPChannelException
      * @throws \AMQPConnectionException
      */
-    private function initQueue(\AMQPChannel $channel)
+    private function initQueue(\AMQPChannel $channel) : \AMQPQueue
     {
         $queue = new \AMQPQueue($channel);
         $queue->setFlags(AMQP_DURABLE);
@@ -105,7 +105,7 @@ class SingleThreadWorker implements WorkerInterface
     /** Stop handler for worker
      * @return mixed|void
      */
-    public function stop()
+    public function stop() : void
     {
         echo 'Worker stopped when finish worked with task...';
         $this->isInterrupted = true;

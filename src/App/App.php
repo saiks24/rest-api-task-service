@@ -21,7 +21,7 @@ class App
     /**
      * Run application instance
      */
-    public function run()
+    public function run() : void
     {
         try {
             $app = new \Slim\App();

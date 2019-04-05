@@ -21,7 +21,7 @@ class RedisTaskStorage implements StorageInterface
         $this->redisConnect = $redis;
     }
 
-    public function add(CommandInterface $command)
+    public function add(CommandInterface $command) : void
     {
         $this->redisConnect->hMset(
           'tasks:'.$command->getId(),
