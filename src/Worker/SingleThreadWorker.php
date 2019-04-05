@@ -7,13 +7,21 @@ use Saiks24\Storage\RedisTaskStorage;
 
 class SingleThreadWorker implements WorkerInterface
 {
-    /** @var bool */
+    /** @var bool Flag that worker been interrupted*/
     private $isInterrupted;
-    /** Start consumer work
+
+    /** @var \AMQPQueue Queue in AMQP broker*/
+    private $queue;
+
+    /** @var \Saiks24\Storage\StorageInterface  Storage for tasks*/
+    private $taskStorage;
+
+    /** Prepare consumer and start working
      * @return mixed|void
      * @throws \AMQPChannelException
      * @throws \AMQPConnectionException
      * @throws \AMQPExchangeException
+     * @throws \Exception
      */
     public function run()
     {
@@ -24,30 +32,33 @@ class SingleThreadWorker implements WorkerInterface
         $connection->pconnect();
         echo 'Init channel and exchange'.PHP_EOL;
         $channel = new \AMQPChannel($connection);
-        $exchange = new \AMQPExchange($channel);
-        $exchange->setType(AMQP_EX_TYPE_DIRECT);
-        $exchange->setName('task_exchange');
-        $exchange->setFlags(AMQP_DURABLE);
-        $exchange->declareExchange();
-        echo 'Init queue'.PHP_EOL;
-        $queue = new \AMQPQueue($channel);
-        $queue->setFlags(AMQP_DURABLE);
-        $queue->setName('task_queue');
-        $queue->declareQueue();
-        $queue->bind('task_exchange','default.queue');
-        $taskStorage = new RedisTaskStorage(new \Redis());
+        $this->initExchange($channel);
+        $this->queue = $this->initQueue($channel);
+        $this->taskStorage = new RedisTaskStorage(new \Redis());
         echo 'Done! Worker waited connections...'.PHP_EOL;
+        $this->work();
+    }
+
+    /**
+     * Start work
+     *
+     * @return void
+     *
+     * @throws \Exception
+     */
+    private function work() : void
+    {
         while (true) {
-            $messageFromQueue = $queue->get();
+            $messageFromQueue = $this->queue->get();
             if ($messageFromQueue instanceof \AMQPEnvelope) {
                 /** @var CommandInterface $command */
                 $command = unserialize($messageFromQueue->getBody());
                 if ($command instanceof CommandInterface) {
                     $command->execute();
-                    $queue->ack($messageFromQueue->getDeliveryTag());
-                    $taskStorage->add($command);
+                    $this->queue->ack($messageFromQueue->getDeliveryTag());
+                    $this->taskStorage->add($command);
                 } else {
-                    $queue->nack($messageFromQueue->getDeliveryTag());
+                    $this->queue->nack($messageFromQueue->getDeliveryTag());
                 }
             }
             if($this->isInterrupted) {
@@ -57,12 +68,51 @@ class SingleThreadWorker implements WorkerInterface
         }
     }
 
+    /** Create exchange
+     * @param \AMQPChannel $channel
+     *
+     * @throws \AMQPChannelException
+     * @throws \AMQPConnectionException
+     * @throws \AMQPExchangeException
+     */
+    private function initExchange(\AMQPChannel $channel)
+    {
+        $exchange = new \AMQPExchange($channel);
+        $exchange->setType(AMQP_EX_TYPE_DIRECT);
+        $exchange->setName('task_exchange');
+        $exchange->setFlags(AMQP_DURABLE);
+        $exchange->declareExchange();
+    }
+
+    /** Create queue
+     * @param \AMQPChannel $channel
+     *
+     * @return \AMQPQueue
+     * @throws \AMQPChannelException
+     * @throws \AMQPConnectionException
+     */
+    private function initQueue(\AMQPChannel $channel)
+    {
+        $queue = new \AMQPQueue($channel);
+        $queue->setFlags(AMQP_DURABLE);
+        $queue->setName('task_queue');
+        $queue->declareQueue();
+        $queue->bind('task_exchange','default.queue');
+        return $queue;
+    }
+
+    /** Stop handler for worker
+     * @return mixed|void
+     */
     public function stop()
     {
         echo 'Worker stopped when finish worked with task...';
         $this->isInterrupted = true;
     }
 
+    /** Get info handler for worker
+     * @return array
+     */
     public function getStatus(): array
     {
         return [];
