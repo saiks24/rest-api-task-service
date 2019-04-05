@@ -3,6 +3,7 @@ namespace Saiks24\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Saiks24\App\App;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
 
@@ -14,6 +15,9 @@ class CheckCredentialMiddleware
             $token = $request->getHeaderLine('Authorization');
             if(empty($token)) {
                 throw new \InvalidArgumentException('Token required in Authorization header');
+            }
+            if(!$this->validateToken(App::make(),$token)) {
+                throw new \InvalidArgumentException('Bad token');
             }
             /** @var \Psr\Http\Message\ResponseInterface $response */
             $response = $next($request,$response);
@@ -32,8 +36,15 @@ class CheckCredentialMiddleware
 
     }
 
-    private function validateToken(string $token)
+    /** Validate request auth token
+     * @param \Saiks24\App\App $app
+     * @param string           $token
+     *
+     * @return bool
+     */
+    private function validateToken(App $app, string $token) : bool
     {
-
+        $appToken = $app->getConfig()->configGetValue('token');
+        return $appToken === trim($token);
     }
 }
