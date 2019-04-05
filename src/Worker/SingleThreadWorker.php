@@ -17,17 +17,18 @@ class SingleThreadWorker implements WorkerInterface
     private $taskStorage;
 
     /** Prepare consumer and start working
+     * @param string Base application dir
      * @return mixed|void
      * @throws \AMQPChannelException
      * @throws \AMQPConnectionException
      * @throws \AMQPExchangeException
      * @throws \Exception
      */
-    public function run()
+    public function run(string $baseDir = '')
     {
         echo 'Worker Try start on pid: ' . getmypid().PHP_EOL;
         echo 'Init connect to queue service'.PHP_EOL;
-        $config = new Config(__DIR__.'/../../config/config.php');
+        $config = new Config($baseDir.'/config/config.php');
         $connection = new \AMQPConnection($config->configGetValue('amqp'));
         $connection->pconnect();
         echo 'Init channel and exchange'.PHP_EOL;
