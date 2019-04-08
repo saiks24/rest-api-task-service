@@ -13,9 +13,4 @@ interface WorkerInterface
      * @return mixed
      */
     public function stop();
-
-    /** Get status of worker process
-     * @return array
-     */
-    public function getStatus() : array ;
 }

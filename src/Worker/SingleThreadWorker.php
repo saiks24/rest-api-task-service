@@ -111,12 +111,4 @@ class SingleThreadWorker implements WorkerInterface
         $this->isInterrupted = true;
     }
 
-    /** Get info handler for worker
-     * @return array
-     */
-    public function getStatus(): array
-    {
-        return [];
-    }
-
 }
