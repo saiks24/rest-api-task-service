@@ -47,17 +47,38 @@ class CommandController
      */
     public function delete(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $taskId = $request->getParsedBody()['id'] ?? null;
-        $storage = new RedisTaskStorage(new \Redis());
-        $storage->delete($taskId);
-        $body = $response->getBody();
-        $body->write(
-          json_encode(['status'=>'success','message'=>'task deleted'])
-        );
-        $response = $response
-          ->withStatus(200)
-          ->withBody($body);
-        return $response;
+        try {
+            $requestBody = $request->getParsedBody();
+            $taskId = $requestBody['id'] ?? null;
+            if(empty($taskId)) {
+                throw new \InvalidArgumentException('Param: id required in request string');
+            }
+            $storage = new RedisTaskStorage(new \Redis());
+            $storage->delete($taskId);
+            $body = $response->getBody();
+            $body->write(
+              json_encode(['status'=>'success','message'=>'task deleted'])
+            );
+            $response = $response
+              ->withStatus(200)
+              ->withBody($body);
+            return $response;
+        } catch (\InvalidArgumentException $e) {
+            $headers = new Headers();
+            $headers->set('Content-Type','application/json');
+            $headers->set('Cache-Control','private, no-cache, max-age=0, must-revalidate');
+            $body = new Body(fopen('php://temp','a+'));
+            $body->write(json_encode([
+              'status' => 'error',
+              'message' => $e->getMessage()
+            ]));
+            $badRequestResponse = new Response(
+              StatusCode::HTTP_BAD_REQUEST,
+              $headers,
+              $body
+            );
+            return $badRequestResponse;
+        }
     }
 
     /** Get task status
