@@ -63,6 +63,7 @@ class CommandController
             );
             $response = $response
               ->withStatus(200)
+              ->withAddedHeader('Content-Type','application/json')
               ->withBody($body);
             return $response;
         } catch (\InvalidArgumentException $e) {
@@ -106,6 +107,7 @@ class CommandController
             );
             $response = $response
               ->withStatus(200)
+              ->withAddedHeader('Content-Type','application/json')
               ->withBody($body);
             return $response;
         } catch (\InvalidArgumentException $e) {
