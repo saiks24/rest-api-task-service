@@ -3,6 +3,7 @@ namespace Saiks24\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Saiks24\App\App;
 use Saiks24\Command\TestCommand;
 use Saiks24\Queue\AMQPQueue;
 use Saiks24\Storage\RedisTaskStorage;
@@ -28,7 +29,7 @@ class CommandController
         $queue = new AMQPQueue();
         $command = new TestCommand(10,'progress',$taskId);
         $queue->addTaskToQueue($command);
-        $storage = StorageFactory::getStorage();
+        $storage = StorageFactory::getStorage(App::make()->getConfig());
         $storage->add($command);
         $body = $response->getBody();
         $body->write(
@@ -54,7 +55,7 @@ class CommandController
             if(empty($taskId)) {
                 throw new \InvalidArgumentException('Param: id required in request string');
             }
-            $storage = StorageFactory::getStorage();
+            $storage = StorageFactory::getStorage(App::make()->getConfig());
             $storage->delete($taskId);
             $body = $response->getBody();
             $body->write(
@@ -96,7 +97,7 @@ class CommandController
             if(empty($taskId)) {
                 throw new \InvalidArgumentException('Param: id required in request string');
             }
-            $storage = StorageFactory::getStorage();
+            $storage = StorageFactory::getStorage(App::make()->getConfig());
             $task = $storage->get($taskId);
             $status = $task->getStatus();
             $body = $response->getBody();

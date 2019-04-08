@@ -2,16 +2,13 @@
 
 namespace Saiks24\Storage;
 
-
-use Saiks24\App\App;
+use Saiks24\App\Config;
 
 class StorageFactory
 {
-    public static function getStorage() : StorageInterface
+    public static function getStorage(Config $config) : StorageInterface
     {
-        $currentTaskStorageClass = App::make()
-          ->getConfig()
-          ->configGetValue('taskStorage');
+        $currentTaskStorageClass = $config->configGetValue('taskStorage');
         return new $currentTaskStorageClass();
     }
 }
