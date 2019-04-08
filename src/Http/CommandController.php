@@ -70,7 +70,7 @@ class CommandController
             $headers = new Headers();
             $headers->set('Content-Type','application/json');
             $headers->set('Cache-Control','private, no-cache, max-age=0, must-revalidate');
-            $body = new Body(fopen('php://temp','a+'));
+            $body = new Body(fopen('php://temp','w+'));
             $body->write(json_encode([
               'status' => 'error',
               'message' => $e->getMessage()
@@ -114,7 +114,7 @@ class CommandController
             $headers = new Headers();
             $headers->set('Content-Type','application/json');
             $headers->set('Cache-Control','private, no-cache, max-age=0, must-revalidate');
-            $body = new Body(fopen('php://temp','a+'));
+            $body = new Body(fopen('php://temp','w+'));
             $body->write(json_encode([
               'status' => 'error',
               'message' => $e->getMessage()
