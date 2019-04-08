@@ -13,8 +13,9 @@ class RedisTaskStorage implements StorageInterface
     /** @var \Redis */
     private $redisConnect;
 
-    public function __construct(\Redis $redis)
+    public function __construct()
     {
+        $redis = new \Redis();
         $config = new Config(__DIR__.'/../../config/config.php');
         $redisConfig = $config->configGetValue('redis');
         $redis->pconnect($redisConfig['host']);

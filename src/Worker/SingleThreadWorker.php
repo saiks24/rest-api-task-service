@@ -4,6 +4,7 @@ namespace Saiks24\Worker;
 use Saiks24\App\Config;
 use Saiks24\Command\CommandInterface;
 use Saiks24\Storage\RedisTaskStorage;
+use Saiks24\Storage\StorageFactory;
 
 class SingleThreadWorker implements WorkerInterface
 {
@@ -35,7 +36,7 @@ class SingleThreadWorker implements WorkerInterface
         $channel = new \AMQPChannel($connection);
         $this->initExchange($channel);
         $this->queue = $this->initQueue($channel);
-        $this->taskStorage = new RedisTaskStorage(new \Redis());
+        $this->taskStorage = StorageFactory::getStorage();
         echo 'Done! Worker waited connections...'.PHP_EOL;
         $this->work();
     }

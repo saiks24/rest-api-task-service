@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Saiks24\Command\TestCommand;
 use Saiks24\Queue\AMQPQueue;
 use Saiks24\Storage\RedisTaskStorage;
+use Saiks24\Storage\StorageFactory;
 use Slim\Http\Body;
 use Slim\Http\Headers;
 use Slim\Http\Response;
@@ -27,7 +28,7 @@ class CommandController
         $queue = new AMQPQueue();
         $command = new TestCommand(10,'progress',$taskId);
         $queue->addTaskToQueue($command);
-        $storage = new RedisTaskStorage(new \Redis());
+        $storage = StorageFactory::getStorage();
         $storage->add($command);
         $body = $response->getBody();
         $body->write(
@@ -53,7 +54,7 @@ class CommandController
             if(empty($taskId)) {
                 throw new \InvalidArgumentException('Param: id required in request string');
             }
-            $storage = new RedisTaskStorage(new \Redis());
+            $storage = StorageFactory::getStorage();
             $storage->delete($taskId);
             $body = $response->getBody();
             $body->write(
@@ -95,7 +96,7 @@ class CommandController
             if(empty($taskId)) {
                 throw new \InvalidArgumentException('Param: id required in request string');
             }
-            $storage = new RedisTaskStorage(new \Redis());
+            $storage = StorageFactory::getStorage();
             $task = $storage->get($taskId);
             $status = $task->getStatus();
             $body = $response->getBody();

@@ -12,5 +12,6 @@ return [
     'password' => 'guest'
   ],
   'rateLimit' => 5,
-  'token' => 'kjnxy1fjj1o231t05tes'
+  'token' => 'kjnxy1fjj1o231t05tes',
+  'taskStorage' => \Saiks24\Storage\RedisTaskStorage::class,
 ];
