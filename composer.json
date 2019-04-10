@@ -12,7 +12,9 @@
   "license": "Apache-2",
   "require": {
     "slim/slim": "^3.0",
-    "monolog/monolog": "^1.17"
+    "monolog/monolog": "^1.17",
+    "ext-pcntl": "*",
+    "ext-amqp": "*"
   },
   "autoload": {
     "psr-4": {
