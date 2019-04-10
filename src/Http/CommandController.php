@@ -16,7 +16,7 @@ use Slim\Http\Stream;
 
 class CommandController
 {
-
+    use ResponseCreatorTrait;
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface      $response
@@ -67,20 +67,11 @@ class CommandController
               ->withBody($body);
             return $response;
         } catch (\InvalidArgumentException $e) {
-            $headers = new Headers();
-            $headers->set('Content-Type','application/json');
-            $headers->set('Cache-Control','private, no-cache, max-age=0, must-revalidate');
-            $body = new Body(fopen('php://temp','w+'));
-            $body->write(json_encode([
-              'status' => 'error',
-              'message' => $e->getMessage()
-            ]));
-            $badRequestResponse = new Response(
-              StatusCode::HTTP_BAD_REQUEST,
-              $headers,
-              $body
-            );
-            return $badRequestResponse;
+            $message = json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+            return $this->createErrorResponse($message,400);
         }
     }
 
@@ -111,20 +102,11 @@ class CommandController
               ->withBody($body);
             return $response;
         } catch (\InvalidArgumentException $e) {
-            $headers = new Headers();
-            $headers->set('Content-Type','application/json');
-            $headers->set('Cache-Control','private, no-cache, max-age=0, must-revalidate');
-            $body = new Body(fopen('php://temp','w+'));
-            $body->write(json_encode([
-              'status' => 'error',
-              'message' => $e->getMessage()
-            ]));
-            $badRequestResponse = new Response(
-              StatusCode::HTTP_BAD_REQUEST,
-              $headers,
-              $body
-            );
-            return $badRequestResponse;
+            $message = json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+            return $this->createErrorResponse($message,400);
         }
     }
 }

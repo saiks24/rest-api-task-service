@@ -13,9 +13,15 @@ class App
     /** @var \Saiks24\App\Config */
     private $config;
 
-    private function __construct(Config $config)
+    const DEFAULT_PATH_TO_CONFIG = __DIR__.'/../../config/config.php';
+
+    private function __construct()
     {
-        $this->config = $config;
+        if(empty($this->config)) {
+            $this->setConfig(
+                new Config(self::DEFAULT_PATH_TO_CONFIG)
+            );
+        }
     }
 
     /**
@@ -24,6 +30,9 @@ class App
     public function run() : void
     {
         try {
+            if(empty($this->config)) {
+                throw new \InvalidArgumentException('Config file not set');
+            }
             $app = new \Slim\App();
 
             $app->post(
@@ -52,21 +61,16 @@ class App
     }
 
     /** Make application instance
-     * @param string $pathToConfig
      *
-     * @return \Saiks24\App\App
+     * @return self
      */
-    public static function make(string $pathToConfig = '') : self
+    public static function make() : self
     {
         try {
             if(!empty(static::$instance)) {
                 return static::$instance;
             }
-            if(!is_file($pathToConfig)) {
-                throw new \Exception('Wrong config file');
-            }
-            $config = new Config($pathToConfig);
-            $app = new App($config);
+            $app = new App();
             self::$instance = $app;
             return $app;
         } catch (\Exception $e) {
@@ -75,10 +79,18 @@ class App
     }
 
     /**
-     * @return \Saiks24\App\Config
+     * @return Config
      */
     public function getConfig(): Config
     {
         return $this->config;
+    }
+
+    /**
+     * @param Config $config
+     */
+    public function setConfig(Config $config): void
+    {
+        $this->config = $config;
     }
 }

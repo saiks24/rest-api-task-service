@@ -41,7 +41,10 @@ class RateLimiter
         }
 
         $this->incrementRateById($responseId);
-        $response = $next($request,$response);
+        if(!empty($next)) {
+            /** @var \Psr\Http\Message\ResponseInterface $response */
+            $response = $next($request,$response);
+        }
         return $response;
     }
 
