@@ -14,7 +14,8 @@
     "slim/slim": "^3.0",
     "monolog/monolog": "^1.17",
     "ext-pcntl": "*",
-    "ext-amqp": "*"
+    "ext-amqp": "*",
+    "ext-redis": "*"
   },
   "autoload": {
     "psr-4": {
