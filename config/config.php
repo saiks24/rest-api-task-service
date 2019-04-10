@@ -13,5 +13,5 @@ return [
   ],
   'rateLimit' => 5,
   'token' => 'kjnxy1fjj1o231t05tes',
-  'taskStorage' => \Saiks24\Storage\RedisTaskStorage::class,
+  'taskStorage' => ['class' => \Saiks24\Storage\RedisTaskStorage::class, 'args' => new Redis()],
 ];

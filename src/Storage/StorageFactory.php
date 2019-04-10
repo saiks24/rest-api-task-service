@@ -9,6 +9,7 @@ class StorageFactory
     public static function getStorage(Config $config) : StorageInterface
     {
         $currentTaskStorageClass = $config->configGetValue('taskStorage');
-        return new $currentTaskStorageClass();
+        $storage = new $currentTaskStorageClass['class']($currentTaskStorageClass['args']);
+        return $storage;
     }
 }

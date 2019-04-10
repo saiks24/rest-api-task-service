@@ -39,11 +39,11 @@ class CheckCredentialMiddlewareTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $responseMock->method('withHeader')->willReturn($responseMock);
         $responseMock->method('getBody')->willReturn('');
-        $responseMock->expects(self::once())->method('withStatus')->withConsecutive([403]);
-
 
         $checkCredentialMiddleware = new \Saiks24\Middleware\CheckCredentialMiddleware();
         /** @var \Slim\Http\Response $response */
-        $checkCredentialMiddleware($requestMock,$responseMock,[]);
+        $response = $checkCredentialMiddleware($requestMock,$responseMock,[]);
+
+        self::assertEquals(\Codeception\Util\HttpCode::FORBIDDEN,$response->getStatusCode());
     }
 }

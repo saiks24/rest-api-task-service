@@ -5,10 +5,13 @@ namespace Saiks24\Middleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Saiks24\App\App;
+use Saiks24\Http\ResponseCreatorTrait;
 use Slim\Http\Response;
 
 class RateLimiter
 {
+    use ResponseCreatorTrait;
+
     /** @var \Redis */
     private $redis;
 
@@ -93,10 +96,7 @@ class RateLimiter
      */
     private function createClientErrorResponse(ResponseInterface $response) : ResponseInterface
     {
-        $badRequestResponse = $response->withStatus(400);
-        $body = $badRequestResponse->getBody();
-        $body->write(\json_encode(['status'=>'error','message'=>'too many requests']));
-        $badRequestResponse->withBody($body);
-        return $badRequestResponse;
+        $message = \json_encode(['status'=>'error','message'=>'too many requests']);
+        return $this->createErrorResponse(400,$message);
     }
 }

@@ -35,7 +35,7 @@ class SingleThreadWorker implements WorkerInterface
         $channel = new \AMQPChannel($connection);
         $this->initExchange($channel);
         $this->queue = $this->initQueue($channel);
-        $this->taskStorage = new RedisTaskStorage();
+        $this->taskStorage = new RedisTaskStorage(new \Redis());
         echo 'Done! Worker waited connections...'.PHP_EOL;
         $this->work();
     }
