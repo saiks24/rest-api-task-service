@@ -1,6 +1,7 @@
 <?php
 namespace Saiks24\Queue;
 
+use Saiks24\App\App;
 use Saiks24\Command\CommandInterface;
 
 class AMQPQueue
@@ -49,13 +50,9 @@ class AMQPQueue
 
     private function connect() : \AMQPConnection
     {
-        $cnn = new \AMQPConnection([
-          'host'  => '0.0.0.0',
-          'port'  => 5672,
-          'vhost' => '/',
-          'login' => 'guest',
-          'password' => 'guest'
-        ]);
+        $config = App::make()->getConfig();
+        $paramsToBrokerConnect = $config->configGetValue('amqp');
+        $cnn = new \AMQPConnection($paramsToBrokerConnect);
         $cnn->pconnect();
         return $cnn;
     }
