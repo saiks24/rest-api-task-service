@@ -19,4 +19,12 @@ interface CommandInterface
      */
     public function getStatus() : string;
 
+    /**
+     * Set command status
+     * @param string $status
+     *
+     * @return void
+     */
+    public function setStatus(string $status) : void;
+
 }

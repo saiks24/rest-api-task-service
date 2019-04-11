@@ -55,7 +55,7 @@ class CreateTaskCest
         $I->wantToTest('Создать задачу, и получить ее идентификатор и статус в ответе');
         //TODO Вынести хардкод
         $I->haveHttpHeader('Authorization','kjnxy1fjj1o231t05tes');
-        $I->sendPOST('/api/v1/command/create');
+        $I->sendPOST('/api/v1/command/create',json_encode(['type'=>'test','args'=>3]));
         $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson([

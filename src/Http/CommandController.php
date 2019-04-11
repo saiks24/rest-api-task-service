@@ -4,6 +4,7 @@ namespace Saiks24\Http;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Saiks24\App\App;
+use Saiks24\Command\CommandFactory;
 use Saiks24\Command\TestCommand;
 use Saiks24\Queue\AMQPQueue;
 use Saiks24\Storage\RedisTaskStorage;
@@ -16,7 +17,9 @@ use Slim\Http\Stream;
 
 class CommandController
 {
+
     use ResponseCreatorTrait;
+
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface      $response
@@ -25,20 +28,37 @@ class CommandController
      */
     public function create(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $taskId = md5(rand(0,PHP_INT_MAX));
-        $queue = new AMQPQueue();
-        $command = new TestCommand(10,'progress',$taskId);
-        $queue->addTaskToQueue($command);
-        $storage = StorageFactory::getStorage(App::make()->getConfig());
-        $storage->add($command);
-        $body = $response->getBody();
-        $body->write(
-          json_encode(['status'=>'accept','id'=>$command->getId()])
-        );
-        $response = $response
-          ->withStatus(200)
-          ->withBody($body);
-        return $response;
+        try {
+            $taskParams = json_decode($request->getBody()->getContents(),true);
+            if(empty($taskParams)) {
+                throw new \InvalidArgumentException('Empty task params');
+            }
+            $validTasks = App::make()->getConfig()->configGetValue('tasks');
+            if(!isset($validTasks[$taskParams['type']]) || empty($taskParams['args'])) {
+                throw new \InvalidArgumentException('Wrong task params');
+            }
+            $queue = new AMQPQueue();
+            $command = CommandFactory::createCommand($validTasks[$taskParams['type']],$taskParams['args']);
+            $queue->addTaskToQueue($command);
+            $storage = StorageFactory::getStorage(App::make()->getConfig());
+            $command->setStatus('accept');
+            $storage->add($command);
+            $body = $response->getBody();
+            $body->write(
+                json_encode(['status'=>'accept','id'=>$command->getId()])
+            );
+            $response = $response
+                ->withStatus(200)
+                ->withBody($body);
+            return $response;
+        } catch (\InvalidArgumentException $e) {
+            $message = json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+            $badResponse = $this->createErrorResponse($message,400);
+            return $badResponse;
+        }
     }
 
     /** Delete task from storage

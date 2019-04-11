@@ -81,7 +81,7 @@ class TaskInfoCest
         $I->wantToTest('Что сервер корректно отдаст информацию по задаче');
         // Создадим задачу
         $I->haveHttpHeader('Authorization','kjnxy1fjj1o231t05tes');
-        $I->sendPOST('/api/v1/command/create');
+        $I->sendPOST('/api/v1/command/create',json_encode(['type'=>'test','args'=>3]));
         $task = $I->grabResponse();
         $id = \json_decode($task,true)['id'];
 
@@ -91,7 +91,7 @@ class TaskInfoCest
         $I->seeResponseCodeIsSuccessful();
         $I->seeResponseContainsJson([
           'status' => 'success',
-          'message' => 'progress'
+          'message' => 'accept'
         ]);
     }
 }

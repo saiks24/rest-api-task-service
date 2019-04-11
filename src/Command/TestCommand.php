@@ -14,15 +14,13 @@ class TestCommand implements CommandInterface
      *
      * @param int    $time
      * @param string $status
-     * @param string $id
      */
-    public function __construct(int $time, string $status = 'undefined', string $id)
+    public function __construct(int $time, string $status = 'undefined')
     {
         $this->time = $time;
         $this->status = $status;
-        $this->id = $id;
+        $this->id = md5(rand(0,PHP_INT_MAX));
     }
-
 
     public function execute()
     {
@@ -50,5 +48,9 @@ class TestCommand implements CommandInterface
         return $this->id;
     }
 
+    public function setStatus(string  $status): void
+    {
+        $this->status = $status;
+    }
 
 }
