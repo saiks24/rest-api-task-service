@@ -5,14 +5,19 @@ use Saiks24\Command\CommandInterface;
 
 class AMQPQueue
 {
+    /** @var \AMQPQueue */
+    private $queue;
+
+    /** @var \AMQPExchange */
+    private $exchange;
 
     public function addTaskToQueue(CommandInterface $command) : void
     {
         $connection = $this->connect();
         $channel = new \AMQPChannel($connection);
-        $exchange = $this->instanceExchange($channel);
-        $this->instanceQueue($channel);
-        $exchange->publish(
+        $this->exchange = $this->instanceExchange($channel);
+        $this->queue = $this->instanceQueue($channel);
+        $this->exchange->publish(
           serialize($command),
           'task.queue',
           AMQP_NOPARAM,
@@ -53,5 +58,21 @@ class AMQPQueue
         ]);
         $cnn->pconnect();
         return $cnn;
+    }
+
+    /**
+     * @return \AMQPQueue
+     */
+    public function getQueue(): \AMQPQueue
+    {
+        return $this->queue;
+    }
+
+    /**
+     * @return \AMQPExchange
+     */
+    public function getExchange(): \AMQPExchange
+    {
+        return $this->exchange;
     }
 }
