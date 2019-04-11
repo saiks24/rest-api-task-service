@@ -9,5 +9,4 @@
 - Worker soft kill: kill -15 pid (worker ended current task end successfully stopped)
 
 ###Tests
-
 - Test run: ./vendor/bin/codecept run --steps (unit and functional)
