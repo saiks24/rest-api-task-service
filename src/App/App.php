@@ -4,6 +4,7 @@ namespace Saiks24\App;
 use Saiks24\Http\CommandController;
 use Saiks24\Middleware\CheckCredentialMiddleware;
 use Saiks24\Middleware\RateLimiter;
+use Saiks24\Verification\FromConfigCredentialValidator;
 
 class App
 {
@@ -34,23 +35,24 @@ class App
                 throw new \InvalidArgumentException('Config file not set');
             }
             $app = new \Slim\App();
-
+            $credentialValidator = new CheckCredentialMiddleware();
+            $credentialValidator->setVerify(new FromConfigCredentialValidator());
             $app->post(
               '/api/v1/command/create',CommandController::class.':create'
             )->add(
-              new CheckCredentialMiddleware()
+                $credentialValidator
             )->add(new RateLimiter(new \Redis(),10));
 
             $app->delete(
               '/api/v1/command/delete',CommandController::class.':delete'
             )->add(
-              new CheckCredentialMiddleware()
+                $credentialValidator
             )->add(new RateLimiter(new \Redis(),10));
 
             $app->get(
               '/api/v1/command/info',CommandController::class.':info'
             )->add(
-              new CheckCredentialMiddleware()
+                $credentialValidator
             )->add(new RateLimiter(new \Redis(),10));
 
             $app->run();

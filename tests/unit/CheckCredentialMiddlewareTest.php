@@ -17,7 +17,13 @@ class CheckCredentialMiddlewareTest extends \PHPUnit\Framework\TestCase
         ->disableOriginalConstructor()
         ->disableOriginalClone()
         ->getMock();
+
+        $verifyMock = self::getMockBuilder(\Saiks24\Verification\FromConfigCredentialValidator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $verifyMock->method('validate')->willReturn(true);
         $checkCredentialMiddleware = new \Saiks24\Middleware\CheckCredentialMiddleware();
+        $checkCredentialMiddleware->setVerify($verifyMock);
 
 
         $checkCredentialMiddleware($requestMock,$responseMock,[]);
@@ -40,7 +46,13 @@ class CheckCredentialMiddlewareTest extends \PHPUnit\Framework\TestCase
         $responseMock->method('withHeader')->willReturn($responseMock);
         $responseMock->method('getBody')->willReturn('');
 
+        $verifyMock = self::getMockBuilder(\Saiks24\Verification\FromConfigCredentialValidator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $verifyMock->method('validate')->willReturn(false);
         $checkCredentialMiddleware = new \Saiks24\Middleware\CheckCredentialMiddleware();
+        $checkCredentialMiddleware->setVerify($verifyMock);
+
         /** @var \Slim\Http\Response $response */
         $response = $checkCredentialMiddleware($requestMock,$responseMock,[]);
 

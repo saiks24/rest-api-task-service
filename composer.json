@@ -28,7 +28,8 @@
       "Saiks24\\Storage\\":"src/Storage/",
       "Saiks24\\Http\\":"src/Http/",
       "Saiks24\\Middleware\\":"src/Middleware/",
-      "Saiks24\\Worker\\":"src/Worker/"
+      "Saiks24\\Worker\\":"src/Worker/",
+      "Saiks24\\Verification\\":"src/Verification/"
     }
   },
   "require-dev": {

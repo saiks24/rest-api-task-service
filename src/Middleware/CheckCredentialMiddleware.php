@@ -5,12 +5,16 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Saiks24\App\App;
 use Saiks24\Http\ResponseCreatorTrait;
+use Saiks24\Verification\CredentialValidatorInterface;
 use Slim\Http\Response;
 use Slim\Http\StatusCode;
 
 class CheckCredentialMiddleware
 {
     use ResponseCreatorTrait;
+
+    /** @var CredentialValidatorInterface */
+    private $credentialValidator;
 
     public function __invoke(ServerRequestInterface $request,ResponseInterface $response, $next)
     {
@@ -35,6 +39,12 @@ class CheckCredentialMiddleware
 
     }
 
+    public function setVerify(CredentialValidatorInterface $credentialValidator)
+    {
+        $this->credentialValidator = $credentialValidator;
+        return $this;
+    }
+
     /** Validate request auth token
      * @param \Saiks24\App\App $app
      * @param string           $token
@@ -43,7 +53,6 @@ class CheckCredentialMiddleware
      */
     private function validateToken(App $app, string $token) : bool
     {
-        $appToken = $app->getConfig()->configGetValue('token');
-        return $appToken === trim($token);
+        return $this->credentialValidator->validate($token);
     }
 }
