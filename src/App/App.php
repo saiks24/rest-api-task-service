@@ -37,23 +37,21 @@ class App
             $app = new \Slim\App();
             $credentialValidator = new CheckCredentialMiddleware();
             $credentialValidator->setVerify(new FromConfigCredentialValidator());
+            $rateLimit = new RateLimiter(new \Redis(),10);
             $app->post(
               '/api/v1/command/create',CommandController::class.':create'
-            )->add(
-                $credentialValidator
-            )->add(new RateLimiter(new \Redis(),10));
+            )->add($credentialValidator)
+             ->add($rateLimit);
 
             $app->delete(
               '/api/v1/command/delete',CommandController::class.':delete'
-            )->add(
-                $credentialValidator
-            )->add(new RateLimiter(new \Redis(),10));
+            )->add($credentialValidator)
+             ->add($rateLimit);
 
             $app->get(
               '/api/v1/command/info',CommandController::class.':info'
-            )->add(
-                $credentialValidator
-            )->add(new RateLimiter(new \Redis(),10));
+            )->add($credentialValidator)
+             ->add($rateLimit);
 
             $app->run();
         } catch (\Exception $e) {
