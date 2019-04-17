@@ -2,6 +2,7 @@
   "name": "Saiks24/rest-api-task-service",
   "description": "Rest api to work with deferred calculations tasks",
   "homepage": "https://github.com/saiks24/rest-api-task-service",
+  "keywords": ["rest","amqp","api"],
   "authors": [
     {
       "name": "Saiks24",
